@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投稿みっけ｜SNS投稿ネタを30秒で見つける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2d4a;
+    --navy-light: #243d62;
+    --cyan: #00b4c8;
+    --cyan-dark: #0099ab;
+    --cyan-glow: rgba(0,180,200,0.18);
+    --pale: #e6f7fa;
+    --pale-mid: #c8eef4;
+    --white: #ffffff;
+    --text-dark: #1a2d4a;
+    --text-mid: #4a6080;
+    --text-light: #7a90a8;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(26,45,74,0.12);
+    --shadow-card: 0 2px 12px rgba(26,45,74,0.10);
+  }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: linear-gradient(160deg, #e6f7fa 0%, #f0fbfd 40%, #ffffff 100%);
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  /* ヘッダー */
+  header {
+    background: var(--navy);
+    padding: 18px 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--cyan);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+  header h1 span {
+    color: var(--cyan);
+  }
+  .header-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  /* メインコンテナ */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 16px 60px;
+  }
+
+  /* キャッチ */
+  .catch {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .catch-main {
+    font-size: clamp(15px, 3.8vw, 18px);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .catch-main em {
+    font-style: normal;
+    color: var(--cyan-dark);
+    border-bottom: 2px solid var(--cyan);
+    padding-bottom: 1px;
+  }
+  .catch-sub {
+    font-size: 13px;
+    color: var(--text-mid);
+    margin-top: 8px;
+  }
+
+  /* ステップカード */
+  .step-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 24px 20px 20px;
+    margin-bottom: 18px;
+    border: 1.5px solid var(--pale-mid);
+    position: relative;
+  }
+  .step-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--navy);
+    color: var(--cyan);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    flex-shrink: 0;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .step-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+  .step-hint {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  /* 業種グリッド */
+  .industry-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 400px) {
+    .industry-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .industry-btn {
+    background: var(--pale);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+    line-height: 1.4;
+  }
+  .industry-btn:hover {
+    background: var(--cyan-glow);
+    border-color: var(--cyan);
+    color: var(--navy);
+  }
+  .industry-btn.selected {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--cyan);
+    font-weight: 700;
+  }
+  .industry-btn .icon {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  /* テキストエリア */
+  .keyword-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--pale-mid);
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    color: var(--text-dark);
+    background: var(--pale);
+    resize: none;
+    outline: none;
+    transition: border-color 0.18s;
+    line-height: 1.6;
+  }
+  .keyword-input:focus {
+    border-color: var(--cyan);
+    background: #fff;
+  }
+  .keyword-input::placeholder { color: var(--text-light); }
+
+  /* 生成ボタン */
+  .gen-btn {
+    width: 100%;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+    color: var(--navy);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0,180,200,0.35);
+    margin-top: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,180,200,0.45);
+  }
+  .gen-btn:active { transform: translateY(0); }
+  .gen-btn::after {
+    content: '✨';
+    margin-left: 8px;
+  }
+
+  /* ネタカード */
+  .result-section {
+    display: none;
+    margin-top: 8px;
+  }
+  .result-section.visible { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 4px;
+  }
+  .result-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .result-count {
+    font-size: 12px;
+    color: var(--text-light);
+    background: var(--pale);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .idea-card {
+    background: var(--white);
+    border: 1.5px solid var(--pale-mid);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s;
+  }
+  .idea-card:hover { box-shadow: var(--shadow); }
+
+  .idea-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--navy);
+    color: var(--cyan);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .idea-theme {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .idea-caption {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.75;
+    background: var(--pale);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--cyan);
+    white-space: pre-line;
+  }
+  .idea-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .copy-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .copy-btn:hover { background: var(--navy-light); }
+  .copy-btn.copied {
+    background: #28a745;
+    animation: pulse 0.3s ease;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  /* ── 別バージョンボタン ── */
+  .refresh-btn {
+    padding: 10px 14px;
+    background: var(--pale);
+    color: var(--text-mid);
+    border: 1.5px solid var(--pale-mid);
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .refresh-btn:hover {
+    border-color: var(--cyan);
+    color: var(--navy);
+    transform: scale(1.04);
+  }
+  .refresh-btn:active { transform: scale(0.96); }
+  /* スピン中 */
+  .refresh-btn.spinning {
+    pointer-events: none;
+    animation: btnSpin 0.5s cubic-bezier(.4,0,.2,1);
+    color: var(--cyan-dark);
+    border-color: var(--cyan);
+    background: var(--cyan-glow);
+  }
+  @keyframes btnSpin {
+    0%   { transform: scale(1) rotate(0deg); }
+    30%  { transform: scale(0.88) rotate(120deg); }
+    70%  { transform: scale(1.08) rotate(310deg); }
+    100% { transform: scale(1) rotate(360deg); }
+  }
+
+  /* カードのフリップコンテナ */
+  .card-flipper {
+    perspective: 800px;
+  }
+  .idea-caption {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.75;
+    background: var(--pale);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--cyan);
+    white-space: pre-line;
+    transform-origin: top center;
+    transition: none;
+  }
+  .idea-caption.flipping {
+    animation: captionFlip 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes captionFlip {
+    0%   { transform: scaleY(1) translateY(0); opacity: 1; }
+    35%  { transform: scaleY(0) translateY(-8px); opacity: 0; }
+    36%  { transform: scaleY(0) translateY(8px); opacity: 0; }
+    100% { transform: scaleY(1) translateY(0); opacity: 1; }
+  }
+
+  /* ── 別のネタを探すボタン ── */
+  .more-btn-wrap {
+    text-align: center;
+    margin-top: 6px;
+    position: relative;
+  }
+  .more-btn {
+    display: inline-block;
+    padding: 13px 36px;
+    background: transparent;
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    border-radius: 30px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: visible;
+  }
+  .more-btn:hover {
+    background: var(--navy);
+    color: var(--cyan);
+    box-shadow: 0 6px 20px rgba(26,45,74,0.2);
+    transform: translateY(-2px);
+  }
+  .more-btn:active { transform: translateY(0) scale(0.97); }
+  .more-btn.burst {
+    animation: moreBtnBurst 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes moreBtnBurst {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(0.93); }
+    60%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  /* 紙吹雪パーティクル */
+  .confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confettiFall var(--dur, 1s) ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+    80%  { opacity: 0.8; }
+    100% { transform: translate(var(--tx,0px), var(--ty,120px)) rotate(var(--rot,360deg)) scale(0.5); opacity: 0; }
+  }
+
+  /* ── ローディング（強化版） ── */
+  .loading {
+    text-align: center;
+    padding: 36px 20px;
+    display: none;
+  }
+  .loading.visible { display: block; }
+  .loading-dots {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    height: 32px;
+  }
+  .loading-dots span {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    animation: bounceDot 1s infinite;
+  }
+  .loading-dots span:nth-child(1) { background: var(--cyan);      animation-delay: 0s; }
+  .loading-dots span:nth-child(2) { background: var(--navy);      animation-delay: 0.15s; }
+  .loading-dots span:nth-child(3) { background: var(--cyan-dark); animation-delay: 0.3s; }
+  @keyframes bounceDot {
+    0%,100% { transform: translateY(0) scale(1);    opacity: 0.5; }
+    40%      { transform: translateY(-18px) scale(1.25); opacity: 1; }
+    60%      { transform: translateY(-14px) scale(1.1); }
+  }
+  .loading-text {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-top: 14px;
+    animation: textPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes textPulse {
+    0%,100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  /* 使用回数バッジ */
+  .usage-bar {
+    text-align: center;
+    padding: 10px 16px;
+    background: var(--pale);
+    border-radius: 30px;
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+    border: 1px solid var(--pale-mid);
+  }
+  .usage-bar strong { color: var(--navy); }
+  .usage-bar .free-left { color: var(--cyan-dark); font-weight: 700; }
+
+  /* フッター */
+  footer {
+    text-align: center;
+    padding: 28px 20px 40px;
+    font-size: 11px;
+    color: var(--text-light);
+    border-top: 1px solid var(--pale-mid);
+    margin-top: 20px;
+  }
+  footer a { color: var(--cyan-dark); text-decoration: none; }
+
+  /* トースト */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: var(--cyan);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(26,45,74,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">SNS継続サポートツール</div>
+  <h1>📣 投稿<span>みっけ</span></h1>
+  <p class="header-sub">「何を書けばいいかわからない」をゼロにする、SNS継続の専用アプリ</p>
+</header>
+
+<main>
+
+  <div class="catch">
+    <p class="catch-main">業種を選んで一言入力するだけで<br><em>今日の投稿ネタ</em>が30秒で出てくる</p>
+    <p class="catch-sub">ネタ切れなし・コピペOK・そのままSNSに投稿できます 🚀</p>
+  </div>
+
+  <div class="usage-bar" id="usageBar">
+    今日の無料利用：<span class="free-left" id="usageLeft">残り3回</span> ｜ <strong>完全無料でお試し中</strong>
+  </div>
+
+  <!-- STEP 1: 業種選択 -->
+  <div class="step-card">
+    <div class="step-label">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">業種を選んでください</div>
+        <div class="step-hint">あなたのお仕事に近いものを選んでください</div>
+      </div>
+    </div>
+    <div class="industry-grid" id="industryGrid">
+      <button class="industry-btn" data-industry="税理士・会計事務所" onclick="selectIndustry(this)">
+        <span class="icon">📊</span>税理士・<br>会計事務所
+      </button>
+      <button class="industry-btn" data-industry="製造業・工場" onclick="selectIndustry(this)">
+        <span class="icon">🏭</span>製造業・<br>工場
+      </button>
+      <button class="industry-btn" data-industry="飲食店・カフェ" onclick="selectIndustry(this)">
+        <span class="icon">🍽️</span>飲食店・<br>カフェ
+      </button>
+      <button class="industry-btn" data-industry="美容室・サロン" onclick="selectIndustry(this)">
+        <span class="icon">✂️</span>美容室・<br>サロン
+      </button>
+      <button class="industry-btn" data-industry="弁護士・司法書士" onclick="selectIndustry(this)">
+        <span class="icon">⚖️</span>弁護士・<br>司法書士
+      </button>
+      <button class="industry-btn" data-industry="整骨院・整体" onclick="selectIndustry(this)">
+        <span class="icon">💆</span>整骨院・<br>整体
+      </button>
+      <button class="industry-btn" data-industry="不動産業" onclick="selectIndustry(this)">
+        <span class="icon">🏠</span>不動産業
+      </button>
+      <button class="industry-btn" data-industry="コンサルタント" onclick="selectIndustry(this)">
+        <span class="icon">💡</span>コンサル・<br>士業
+      </button>
+      <button class="industry-btn" data-industry="小売・ネットショップ" onclick="selectIndustry(this)">
+        <span class="icon">🛍️</span>小売・<br>ネットショップ
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: キーワード -->
+  <div class="step-card">
+    <div class="step-label">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">今日の気になること・伝えたいことを一言</div>
+        <div class="step-hint">空欄でもOK。思いつきでOKです</div>
+      </div>
+    </div>
+    <textarea class="keyword-input" id="keywordInput" rows="3"
+      placeholder="例：最近お客さんから多い相談・季節のこと・スタッフの様子・お役立ち情報　など何でも"></textarea>
+  </div>
+
+  <!-- 生成ボタン -->
+  <button class="gen-btn" onclick="generateIdeas()">今日の投稿ネタをみっけ！</button>
+
+  <!-- ローディング -->
+  <div class="loading" id="loading">
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <p class="loading-text">投稿ネタを探しています...</p>
+  </div>
+
+  <!-- 結果 -->
+  <div class="result-section" id="resultSection">
+    <div class="result-header">
+      <span class="result-title">📌 今日の投稿ネタ</span>
+      <span class="result-count" id="resultCount">3件</span>
+    </div>
+    <div id="ideaList"></div>
+    <div class="more-btn-wrap">
+      <button class="more-btn" id="moreBtn" onclick="onMoreBtn(this)">🔄 別のネタを探す</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>投稿みっけ | Smile Plus Consulting</p>
+  <p style="margin-top:6px"><a href="https://smileplusctg.com" target="_blank">smileplusctg.com</a></p>
+  <p style="margin-top:8px; font-size:10px;">「考えるを、ひとりにしない」© 2025 SPC</p>
+</footer>
+
+<div class="toast" id="toast">📋 コピーしました！</div>
+
+<script>
+// ==========================================
+// 投稿みっけ - ネタデータベース（APIなし版）
+// ==========================================
+
+const DB = {
+  "税理士・会計事務所": {
+    tags: ["節税のコツ","確定申告","経費の話","経営の気づき","お客様エピソード","税務のQ&A","スタッフ紹介","季節の税務"],
+    ideas: [
+      {
+        theme: "「これ経費になりますか？」よく聞かれる質問ランキング",
+        template: "今日は「{keyword}」についてお話しします。\n\n税理士としてよく聞かれる質問があります。\nそれは「これ経費になりますか？」😅\n\n意外と知られていない経費のOK・NGを\nわかりやすく解説しますね！\n\n「えっ、これが経費に？」と思うものも\nきっとあるはずです。\n\nお気軽にDMや相談もどうぞ🙌\n\n#税理士 #節税 #確定申告 #経費 #中小企業"
+      },
+      {
+        theme: "今の時期だから知っておきたい、税務カレンダーの話",
+        template: "今の時期、経営者の皆さんに\nぜひ知っておいてほしいことがあります📅\n\n「{keyword}」というテーマで今日はお伝えしますね。\n\n毎年同じ時期に「あ、そういえば…」と\nバタバタする方が多いんです。\n\n先手を打つだけで、\n経営者としての余裕がぜんぜん違います。\n\n何かご不明な点はお気軽に📩\n\n#税理士 #税務 #中小企業支援 #経営者向け"
+      },
+      {
+        theme: "お客様から「ありがとう」と言われた瞬間の話",
+        template: "今日は、ちょっと嬉しかったことをシェアします😊\n\nあるお客様から「{keyword}のおかげで助かった」と\n言っていただけました。\n\n数字のことは難しく思えますが、\n「わかりやすく伝える」ことが私たちの使命。\n\n一緒に不安をゼロにしていきましょう！\n\n初回相談は無料で承っています。\nお気軽にDMを📩\n\n#税理士事務所 #中小企業 #経営相談 #確定申告"
+      },
+      {
+        theme: "意外と知らない「個人事業主」と「法人」の違い",
+        template: "起業を考えている方に\n今日はよく聞かれる話をします🏢\n\n個人事業主と法人、\nどちらがいいの？という問いへの答えは\n「状況によります」なんですが…\n\n{keyword}という観点では\nこんな違いがあります。\n\nご自身のケースが気になる方は\nお気軽にDMください！\n\n#税理士 #起業 #法人設立 #個人事業主 #節税"
+      },
+      {
+        theme: "今月の税務トピック、知っておくと損しません",
+        template: "今月の税務情報をお届けします📊\n\n{keyword}について、\n経営者の方はぜひチェックしてください。\n\n「知らなかった」では遅いケースも\n実は多いんです。\n\n毎月こういう情報を発信していますので\nフォローしておくと安心ですよ😊\n\nご質問はお気軽に！\n\n#税理士 #税務情報 #節税 #中小企業経営"
+      }
+    ]
+  },
+
+  "製造業・工場": {
+    tags: ["技術の話","職人エピソード","品質へのこだわり","製造現場の日常","採用情報","モノづくりの想い","設備紹介","お客様事例"],
+    ideas: [
+      {
+        theme: "「この精度、本当にすごい」お客様に言われた言葉",
+        template: "今日は嬉しいエピソードをご紹介します🙌\n\n{keyword}の件でお取引先様から\n「こんな精度、他社では無理だった」と\nおっしゃっていただきました。\n\n私たちが大切にしていること、\nそれは「当たり前の品質を、疑い続けること」。\n\n今日も現場は動いています🏭\n\n#製造業 #ものづくり #品質 #職人 #中小企業"
+      },
+      {
+        theme: "うちの工場の「朝のルーティン」を大公開",
+        template: "今日は工場の朝の風景をお届けします🌅\n\n{keyword}から始まる私たちの一日。\n\n「現場は生き物」とよく言いますが、\n毎朝のルーティンが品質を守る\n一番の秘訣です。\n\n地味だけど、ここが大事なんです😊\n\n工場見学もお気軽にご相談ください！\n\n#製造業 #工場 #ものづくり #品質管理 #職人技"
+      },
+      {
+        theme: "20年のベテランが語る「この仕事の醍醐味」",
+        template: "今日はうちのベテランスタッフを紹介します👷\n\n{keyword}歴20年以上のプロが\n語る「この仕事が好きな理由」。\n\n「完成した瞬間の達成感は、\n何年経っても変わらない」\n\nそんな想いが私たちの製品を\n支えています。\n\n#製造業 #職人 #ものづくり #スタッフ紹介 #工場"
+      },
+      {
+        theme: "「なぜうちの製品は長持ちするのか」その秘密",
+        template: "よくお客様から聞かれます。\n「なぜこんなに長持ちするの？」😊\n\n{keyword}のポイントでいうと、\n実は素材選びの段階から\nこだわりが始まっています。\n\n安く早くより、\n「長く使えるもの」を作ること。\n\nそれが私たちのプライドです🏭\n\n#製造業 #品質 #ものづくり #中小企業 #こだわり"
+      },
+      {
+        theme: "採用情報：私たちと一緒にモノを作りませんか？",
+        template: "スタッフ募集中です🙌\n\n{keyword}に興味がある方、大歓迎！\n\n未経験でも大丈夫。\n大事なのは「丁寧さ」と「やる気」です。\n\n先輩スタッフがしっかりサポートするので\n安心して飛び込んできてください。\n\n見学だけでもOKです！\nDMまたはHPからお問い合わせを📩\n\n#製造業 #求人 #工場 #スタッフ募集 #ものづくり"
+      }
+    ]
+  },
+
+  "飲食店・カフェ": {
+    tags: ["本日のメニュー","食材の話","スタッフ紹介","お客様エピソード","季節のメニュー","こだわりの一品","開店・営業情報","調理のウラ話"],
+    ideas: [
+      {
+        theme: "今日のおすすめ、実は○○にこだわりました",
+        template: "今日のおすすめメニューをご紹介します🍽️\n\n{keyword}を使った一品、\n実はここにこだわっています。\n\n「なんでこんなに美味しいんだろう？」\nその答えは素材と仕込みにあります😊\n\n今日も元気に営業中です！\nぜひ食べに来てください🙏\n\n#飲食店 #本日のメニュー #こだわり #グルメ #ランチ"
+      },
+      {
+        theme: "「また来たくなる」と言ってもらえた理由を考えてみた",
+        template: "先日お客様から嬉しい言葉をいただきました😊\n\n「{keyword}がよくて、また来ちゃった」\n\nリピートしてもらえるお店って\n何が違うんだろうと考えます。\n\n料理の味はもちろんですが、\n「また来たい」と思ってもらえる空気感を\n大切にしています。\n\n今日もお待ちしています！\n\n#飲食店 #カフェ #リピーター #接客 #おもてなし"
+      },
+      {
+        theme: "今が旬！この食材を使った期間限定メニューのお知らせ",
+        template: "今だけの限定メニュー、始めました🌿\n\n{keyword}が旬を迎えていて、\n今週のおすすめはこれです！\n\n旬の食材はやっぱり\n味が全然違います。\n\n数量限定なのでお早めに😊\n\nご予約はDMまたはお電話で📞\n\n#飲食店 #季節メニュー #旬の食材 #限定 #カフェ"
+      },
+      {
+        theme: "うちのスタッフ、実はこんな子たちです",
+        template: "今日はスタッフ紹介をします😊\n\n{keyword}担当の○○は\n実は〇〇が得意なんです（笑）\n\nお店の雰囲気は\nスタッフが作っていると思っています。\n\n元気なスタッフたちと一緒に\n今日もお待ちしています！\n\n#飲食店 #スタッフ紹介 #カフェ #チームワーク #お仕事"
+      },
+      {
+        theme: "開店○周年！これまでの感謝を込めて",
+        template: "おかげさまで{keyword}周年を迎えました🎉\n\n振り返ると本当にたくさんの方に\n支えていただきました。\n\n「ありがとう」の言葉では\n足りないくらい感謝しています。\n\n記念のフェアも準備中です！\nまた発表しますね😊\n\n#飲食店 #周年記念 #感謝 #カフェ #グルメ"
+      }
+    ]
+  },
+
+  "美容室・サロン": {
+    tags: ["スタイル紹介","ヘアケアのコツ","スタッフ紹介","お客様ビフォーアフター","季節のトレンド","サロンの日常","新メニュー","予約情報"],
+    ideas: [
+      {
+        theme: "今季イチオシ！このスタイルが人気の理由",
+        template: "今季のトレンドをご紹介します💇\n\n{keyword}を取り入れたスタイル、\n今すごく人気なんです！\n\n「自分に似合うかな？」と\n思っている方も安心してください。\n\n顔型やライフスタイルに合わせて\n提案しますのでお任せください😊\n\nご予約はDMから📩\n\n#美容室 #ヘアスタイル #トレンド #サロン #ヘアカラー"
+      },
+      {
+        theme: "「なかなかまとまらない…」そのお悩み、解決できます",
+        template: "よくいただくお悩みをシェアします。\n\n「{keyword}がうまくいかない」\n「すぐ崩れる」\n「毎朝時間がかかって大変」\n\nそんなお悩みをお持ちの方に\nぜひ一度ご相談いただきたいです💇\n\n技術だけじゃなく、\nおうちでのケア方法も一緒にお伝えしますよ😊\n\n#美容室 #ヘアケア #お悩み解決 #サロン #ヘアスタイル"
+      },
+      {
+        theme: "ヘアカラーを長持ちさせる、自宅でできる3つのコツ",
+        template: "カラーをしている方へのお役立ち情報です🎨\n\n{keyword}のためにできること、\n実はおうちケアがすごく大事なんです。\n\n3つのポイントを守るだけで\nカラーの持ちがぜんぜん違います！\n\n「もったいない色落ち」をなくして\n素敵な毎日を送りましょう💄\n\n#美容室 #ヘアカラー #ヘアケア #美髪 #サロン"
+      },
+      {
+        theme: "お客様のビフォーアフター、ご紹介していいですか？",
+        template: "お客様の許可をいただいてご紹介します✨\n\n{keyword}でお越しになったOさん、\nこんな素敵に変わりました！\n\n「気分がぜんぜん違う！」と\n喜んでいただけてこちらも嬉しい😊\n\n変わりたい、変えてみたいという方、\nぜひご相談ください！\n\n#美容室 #ビフォーアフター #ヘアスタイル #変身 #サロン"
+      },
+      {
+        theme: "今月のキャンペーン情報をお知らせ",
+        template: "今月のお得なキャンペーンをご案内します🎉\n\n{keyword}のご予約の方に\n特別なサービスをご用意しています。\n\n「ちょうど気になってた」という方、\nこの機会にぜひ😊\n\nご予約はDM・お電話・ホームページから！\n席数に限りがあるのでお早めに📩\n\n#美容室 #キャンペーン #サロン #お得 #ヘアスタイル"
+      }
+    ]
+  },
+
+  "弁護士・司法書士": {
+    tags: ["法律相談のあるある","身近な法律の話","事例紹介","注意したいトラブル","相談のすすめ方","遺言・相続","離婚・家族法","ビジネス法務"],
+    ideas: [
+      {
+        theme: "「もっと早く相談すれば…」よくいただく後悔の言葉",
+        template: "今日は大切なことをお伝えします⚖️\n\n「{keyword}のことで、\nもっと早く相談すればよかった…」\n\nこういうお声をよくいただきます。\n\n法律のトラブルは\n早めの相談が解決の近道です。\n\n「これって相談していいの？」\nそんなことでも大丈夫です。\nまずはお気軽にご連絡を📩\n\n#弁護士 #法律相談 #司法書士 #トラブル解決 #相続"
+      },
+      {
+        theme: "意外と知らない「内容証明」の使い方",
+        template: "今日は身近な法的手段をご紹介します📝\n\n「内容証明」って聞いたことありますか？\n\n{keyword}のようなケースで\n効果を発揮することがあります。\n\n裁判の前に、\nまずできることがあるんです。\n\n「どうすればいいかわからない」という方、\nぜひ一度ご相談ください。\n\n#弁護士 #内容証明 #法律相談 #トラブル #司法書士"
+      },
+      {
+        theme: "相続の準備、「元気なうち」にやっておくべき理由",
+        template: "相続のことを考えたことはありますか？\n\n「まだ先の話…」と思っている方に\nぜひ読んでほしい内容です⚖️\n\n{keyword}について\n実は「元気なうち」に動くのが\n一番スムーズなんです。\n\n遺言書の作成や資産整理、\n一度ご相談いただけると安心ですよ😊\n\n#相続 #遺言 #弁護士 #司法書士 #終活"
+      },
+      {
+        theme: "「法律って難しい」を解消！よくある相談Q&A",
+        template: "今日はよくいただく質問にお答えします🙋\n\nQ：{keyword}の場合、どうなりますか？\n\nA：状況によって異なりますが、\n一般的には〇〇のような対応が考えられます。\n\n「自分のケースは？」と気になった方は\nぜひ一度ご相談を。\n\n初回相談は気軽にどうぞ📩\n\n#弁護士 #法律相談 #Q&A #司法書士 #法律知識"
+      },
+      {
+        theme: "ビジネストラブルの「初動」がすべてを決める",
+        template: "経営者の方にぜひ知ってほしいことがあります💼\n\nビジネス上のトラブルは\n「初動の48時間」が命取りになることも。\n\n{keyword}のようなケースでも\n早めに専門家に相談するだけで\n選択肢が広がります。\n\n「大事になる前に」ご相談ください。\n企業法務もお気軽に📩\n\n#弁護士 #企業法務 #ビジネス #トラブル対応 #経営者"
+      }
+    ]
+  },
+
+  "整骨院・整体": {
+    tags: ["体のお悩み解消","セルフケアのコツ","施術紹介","スタッフ紹介","患者様エピソード","健康豆知識","姿勢の話","季節の体調管理"],
+    ideas: [
+      {
+        theme: "「なんで肩が凝るのか」正直に解説します",
+        template: "今日は肩こりのお話をします💆\n\n{keyword}が原因で肩が凝ることって\n実は多いんです。\n\n「マッサージしても楽にならない」\nそれは根本の原因を見ていないから。\n\n私たちは「なぜ？」から考える整骨院です。\n\nご予約・ご相談はDMから📩\n\n#整骨院 #肩こり #整体 #姿勢改善 #健康"
+      },
+      {
+        theme: "今日から試せる！デスクワーカーのための1分ストレッチ",
+        template: "今日のお役立ち情報です🙌\n\n{keyword}が気になる方向けに\n1分でできるストレッチを紹介します。\n\n（動画または写真をここに追加）\n\n「たった1分？」と思いますが、\n毎日続けると本当に変わります！\n\nぜひ試してみてください😊\n\n#整骨院 #ストレッチ #肩こり #腰痛 #セルフケア"
+      },
+      {
+        theme: "「治った！」その後こそが大事な理由",
+        template: "施術が終わってからが\n本当のスタートだと思っています💪\n\n{keyword}で来院されたAさん、\n「よくなった！」とおっしゃっていました。\n\nでも大事なのはここから。\n再発しない体づくりを一緒に目指しましょう。\n\nメンテナンスのご相談もお気軽に😊\n\n#整骨院 #整体 #再発予防 #健康 #姿勢"
+      },
+      {
+        theme: "「なんとなく不調」を放っておくと…",
+        template: "「なんとなく体がだるい」\n「疲れが取れない」\n\nそんな症状が続いていませんか？⚠️\n\n{keyword}のような症状を\n放っておくと、後で大きなトラブルに\nなることもあります。\n\n「大げさかな…」と思っていても\nぜひ一度ご相談を。\n\n初回の方も安心してどうぞ📩\n\n#整骨院 #体の不調 #整体 #健康 #未病"
+      },
+      {
+        theme: "寒い季節に気をつけたい体のサインとは",
+        template: "この季節、体からのサインを見逃していませんか❄️\n\n{keyword}が増えるこの時期、\n特に気をつけてほしいことがあります。\n\n「なんか体が重い」は\nサボりじゃなくてシグナルかもしれません。\n\n早めのケアが元気な毎日を守ります。\nお気軽にご相談を😊\n\n#整骨院 #整体 #冬の体調管理 #健康 #セルフケア"
+      }
+    ]
+  },
+
+  "不動産業": {
+    tags: ["物件紹介","不動産の豆知識","お客様エピソード","住まい選びのコツ","地域情報","ローンの話","投資の話","購入・売却の体験談"],
+    ideas: [
+      {
+        theme: "「この物件、実はここがポイントだった」選んで正解の話",
+        template: "今日は物件選びのポイントをご紹介します🏠\n\n先日ご成約いただいたお客様から\n「{keyword}を優先してよかった！」\nというご感想をいただきました。\n\n見た目や価格だけでなく、\n生活スタイルに合った選び方をすると\n後悔がないんですよね。\n\n物件探しのご相談はお気軽に📩\n\n#不動産 #物件探し #住まい選び #マイホーム #一人暮らし"
+      },
+      {
+        theme: "「頭金なし」でも家は買える？よくある誤解を解説",
+        template: "「頭金を貯めてから…」\nそう思っている方へ🏡\n\n{keyword}の条件次第では\n頭金ゼロでも住宅購入ができることも。\n\n大事なのは「今の状況で何ができるか」を\n知ること。\n\n一度シミュレーションしてみませんか？\n無料でご相談いただけます😊\n\n#不動産 #住宅購入 #頭金 #マイホーム #住宅ローン"
+      }
+    ]
+  },
+
+  "コンサルタント": {
+    tags: ["ビジネスの気づき","経営者へのメッセージ","支援事例","考え方の話","SNS活用","AI活用","補助金情報","自分の専門性紹介"],
+    ideas: [
+      {
+        theme: "「強みを言葉にできていますか？」経営者へのお題",
+        template: "今日は経営者の皆さんに\n一つ質問させてください。\n\n「あなたの会社の強みを\n30秒で説明できますか？」\n\n{keyword}のことは得意なのに\nうまく言葉にできない方、実は多いんです。\n\n私たちの仕事は\nその「宝」を一緒に探すこと。\n\nお気軽にご相談ください😊\n\n#コンサルタント #経営 #中小企業支援 #強み #ブランディング"
+      },
+      {
+        theme: "AIを「うまく使えている人」と「使えていない人」の差",
+        template: "最近よく聞かれるテーマです💡\n\n「AIって実際どう使えばいいの？」\n\n{keyword}の場面では\nAIを活用するだけでこれだけ違います。\n\n大事なのは「ツールを使いこなすこと」より\n「何を達成したいか」をはっきりさせること。\n\nAI活用のご相談もお気軽にどうぞ📩\n\n#AI活用 #中小企業 #DX #経営 #コンサルタント"
+      },
+      {
+        theme: "補助金、使わないのはもったいない話",
+        template: "今日は補助金の話をします💰\n\n「うちは関係ないよ」と思っている方、\n本当にそうでしょうか？\n\n{keyword}に取り組もうとしている企業さん、\n活用できる補助金がある可能性があります。\n\n申請の締め切りは意外と早いです。\n今すぐご確認を！\n\nご相談はお気軽にDMまで📩\n\n#補助金 #IT導入補助金 #ものづくり補助金 #中小企業 #経営支援"
+      }
+    ]
+  },
+
+  "小売・ネットショップ": {
+    tags: ["新商品紹介","おすすめ商品","お客様レビュー","使い方提案","季節のキャンペーン","こだわりの話","スタッフのイチオシ","送料・配送情報"],
+    ideas: [
+      {
+        theme: "リピーター続出！このアイテムが選ばれる理由",
+        template: "今日はリピーターさんに愛されている\nアイテムをご紹介します🛍️\n\n{keyword}がポイントで、\n「また買いたい！」というお声を\nたくさんいただいています。\n\nなぜそんなに支持されるのか…\n実はここにこだわりがあります。\n\nぜひ一度試してみてください😊\n\n#ネットショップ #小売 #おすすめ商品 #リピーター #こだわり"
+      },
+      {
+        theme: "「これどうやって使うの？」意外な活用法をご紹介",
+        template: "今日は意外な使い方のご提案です💡\n\n{keyword}って\nこんな使い方もできるんです！\n\nお客様から教えていただいたアイデアを\nシェアしますね。\n\n「そんな手があったか」と\n思っていただけると嬉しいです😊\n\nご購入・お問い合わせはこちらから📩\n\n#小売 #ネットショップ #活用術 #アイデア #お客様の声"
+      }
+    ]
+  }
+};
+
+// ==========================================
+// 状態管理
+// ==========================================
+let selectedIndustry = null;
+let usageCount = parseInt(localStorage.getItem('toukotu_mikke_count') || '0');
+const FREE_LIMIT = 3;
+
+function updateUsageBar() {
+  const left = Math.max(0, FREE_LIMIT - usageCount);
+  const el = document.getElementById('usageLeft');
+  if (el) el.textContent = `残り${left}回`;
+}
+
+function selectIndustry(btn) {
+  document.querySelectorAll('.industry-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedIndustry = btn.dataset.industry;
+}
+
+function generateIdeas() {
+  if (!selectedIndustry) {
+    showToast('まず業種を選んでください！');
+    return;
+  }
+
+  if (usageCount >= FREE_LIMIT) {
+    showToast('本日の無料回数を使い切りました 😊');
+    // 将来のStripe課金誘導にここを差し替え
+    return;
+  }
+
+  const keyword = document.getElementById('keywordInput').value.trim() || '最近感じたこと';
+  const data = DB[selectedIndustry];
+  if (!data) { showToast('このジャンルのネタを準備中です！'); return; }
+
+  // ローディング表示
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('resultSection').classList.remove('visible');
+
+  setTimeout(() => {
+    document.getElementById('loading').classList.remove('visible');
+
+    // ランダムに3件選ぶ
+    const shuffled = [...data.ideas].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, Math.min(3, shuffled.length));
+
+    const listEl = document.getElementById('ideaList');
+    listEl.innerHTML = '';
+
+    picked.forEach((idea, i) => {
+      const caption = idea.template.replace(/\{keyword\}/g, keyword);
+      const tagList = data.tags.slice(0, 3).join(' ／ ');
+
+      const card = document.createElement('div');
+      card.className = 'idea-card';
+      card.innerHTML = `
+        <div class="idea-tag">💡 ${tagList}</div>
+        <div class="idea-theme">📌 ${idea.theme}</div>
+        <div class="idea-caption" id="caption-${i}">${escapeHtml(caption)}</div>
+        <div class="idea-actions">
+          <button class="copy-btn" onclick="copyCaption(${i}, this)">📋 キャプションをコピー</button>
+          <button class="refresh-btn" onclick="shuffleOne(${i}, this)">🔄 別バージョン</button>
+        </div>
+      `;
+      listEl.appendChild(card);
+    });
+
+    document.getElementById('resultCount').textContent = `${picked.length}件`;
+    document.getElementById('resultSection').classList.add('visible');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // 使用回数をカウント
+    usageCount++;
+    localStorage.setItem('toukotu_mikke_count', usageCount);
+    updateUsageBar();
+
+  }, 900);
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+}
+
+function copyCaption(index, btn) {
+  const el = document.getElementById(`caption-${index}`);
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    showToast('📋 コピーしました！そのままSNSに貼り付けどうぞ');
+    setTimeout(() => {
+      btn.textContent = '📋 キャプションをコピー';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+
+function shuffleOne(index, btn) {
+  const data = DB[selectedIndustry];
+  if (!data) return;
+  const keyword = document.getElementById('keywordInput').value.trim() || '最近感じたこと';
+
+  // ボタンをスピンさせる
+  btn.classList.add('spinning');
+  btn.textContent = '🎲 さがし中…';
+
+  const el = document.getElementById(`caption-${index}`);
+
+  // キャプションをフリップ（上に消えて下から出てくる）
+  el.classList.add('flipping');
+
+  setTimeout(() => {
+    const randomIdea = data.ideas[Math.floor(Math.random() * data.ideas.length)];
+    const newCaption = randomIdea.template.replace(/\{keyword\}/g, keyword);
+    el.innerHTML = escapeHtml(newCaption);
+  }, 200);
+
+  setTimeout(() => {
+    el.classList.remove('flipping');
+    btn.classList.remove('spinning');
+    btn.textContent = '🔄 別バージョン';
+    showToast('✨ 別のバージョンにしました！');
+  }, 480);
+}
+
+function launchConfetti(originEl) {
+  const colors = ['#00b4c8','#1a2d4a','#e6f7fa','#ffcc00','#ff6b6b','#a8e063'];
+  const rect = originEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const count = 22;
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+    const dist  = 80 + Math.random() * 100;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist + 60;
+    const rot = (Math.random() - 0.5) * 720;
+    const dur = 0.7 + Math.random() * 0.5;
+    piece.style.cssText = `
+      left:${cx - 4}px; top:${cy - 4}px;
+      background:${colors[i % colors.length]};
+      --tx:${tx}px; --ty:${ty}px; --rot:${rot}deg; --dur:${dur}s;
+      border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), dur * 1000 + 100);
+  }
+}
+
+function onMoreBtn(btn) {
+  btn.classList.add('burst');
+  launchConfetti(btn);
+  setTimeout(() => {
+    btn.classList.remove('burst');
+    generateIdeas();
+  }, 200);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// 初期化
+updateUsageBar();
+
+// 今日の使用回数をリセット（日付が変わったら）
+const today = new Date().toDateString();
+const savedDate = localStorage.getItem('toukotu_mikke_date');
+if (savedDate !== today) {
+  usageCount = 0;
+  localStorage.setItem('toukotu_mikke_count', '0');
+  localStorage.setItem('toukotu_mikke_date', today);
+  updateUsageBar();
+}
+</script>
+</body>
+</html>
